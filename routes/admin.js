@@ -4,7 +4,6 @@ const { resource } = require('../app');
 
 const router = express.Router();
 
-
 router.all('*', (req, res, next) => {
    if(!req.session.admin){
       res.redirect('login');
@@ -16,22 +15,37 @@ router.all('*', (req, res, next) => {
 
 /* GET home page. */
 router.get('/', (req, res) => {
-   res.render('admin/index', { title: 'Admin' });
+   News.find({}, (err, data) => {
+      // console.log(data);
+      // data zawiera tablicę z obiektami umieszczonymi w naszej bazie danych
+      res.render('admin/index', { title: 'Admin', data });
+   });
+
 });
 
 router.get('/news/add', (req, res) => {
-   res.render('admin/news-form', {title: 'Dodaj news'});
+   res.render('admin/news-form', {title: 'Dodaj news', body: {}, errors: {}});
 });
 
 router.post('/news/add', (req, res) => {
    const body = req.body;
    const newsData = new News(body);
+   const errors = newsData.validateSync();
+   // console.log(errors);
 
    newsData.save(err => {
-      console.log(err);
+      if(err){
+         res.render('admin/news-form', {title: 'Dodaj news', errors, body});
+         return;
+      }
+      res.redirect('/admin');
    });
+});
 
-   res.render('admin/news-form', {title: 'Dodaj news'});
+router.get('/news/delete/:id', (req, res) => {
+   News.findByIdAndDelete(req.params.id, (err) => {
+      res.redirect('/admin');
+   });
 });
 
 module.exports = router;
