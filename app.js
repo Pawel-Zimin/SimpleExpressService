@@ -21,8 +21,6 @@ var newsRouter = require('./routes/news');
 var quizRouter = require('./routes/quiz');
 var adminRouter = require('./routes/admin');
 
-// mongodb+srv://Trace:PvTgLTe4vsnpjg5@cluster0.ike6f.mongodb.net/test?retryWrites=true&w=majority
-
 var app = express();
 
 // view engine setup
